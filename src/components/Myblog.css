@@ -48,11 +48,10 @@
 }
 
 .blog-image {
+  position: relative;
   width: 100%;
-  margin-bottom: 15px;
-  border-radius: 8px;
-  overflow: hidden;
   height: 200px;
+  overflow: hidden;
 }
 
 .blog-image img {

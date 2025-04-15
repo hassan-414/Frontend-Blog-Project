@@ -36,9 +36,8 @@ const Login = () => {
         
         setMessage({ text: "Login successful! Redirecting...", type: "success" });
 
-        setTimeout(() => {
           navigate("/"); 
-        }, 2000);
+       
       }
     } catch (err) {
       setMessage({ text: err.response?.data?.message || "Invalid credentials!", type: "error" });

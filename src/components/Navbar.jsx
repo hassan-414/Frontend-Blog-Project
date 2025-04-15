@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -17,10 +16,13 @@ const Navbar = () => {
     if (!token) return;
 
     axios
-      .get("https://backend-blog-project-production-67cb.up.railway.app/api/user", {
-        headers: { Authorization: `Bearer ${token}` },
-        withCredentials: true,
-      })
+      .get(
+        "https://backend-blog-project-production-67cb.up.railway.app/api/user",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true,
+        }
+      )
       .then((res) => setUser(res.data))
       .catch((err) => console.error("Error fetching user:", err));
   }, []);
@@ -46,7 +48,11 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post("https://backend-blog-project-production-67cb.up.railway.app/api/logout", {}, { withCredentials: true });
+      await axios.post(
+        "https://backend-blog-project-production-67cb.up.railway.app/api/logout",
+        {},
+        { withCredentials: true }
+      );
       localStorage.removeItem("token");
       setUser(null);
       setMenuOpen(false);
@@ -69,16 +75,16 @@ const Navbar = () => {
       </div>
 
       <div className="navbar-center-desktop">
-        <input 
-          type="text" 
-          placeholder="Search Blogs..." 
-          className="search-bar" 
+        <input
+          type="text"
+          placeholder="Search Blogs..."
+          className="search-bar"
         />
       </div>
 
-      <div 
-        className={`hamburger ${menuOpen ? "open" : ""}`} 
-        onClick={toggleMenu} 
+      <div
+        className={`hamburger ${menuOpen ? "open" : ""}`}
+        onClick={toggleMenu}
         ref={hamburgerRef}
         aria-label="Menu"
       >
@@ -89,22 +95,27 @@ const Navbar = () => {
 
       <div className={`navbar-right ${menuOpen ? "open" : ""}`} ref={menuRef}>
         <div className="navbar-center-mobile">
-          <input 
-            type="text" 
-            placeholder="Search Blogs..." 
-            className="search-bar" 
+          <input
+            type="text"
+            placeholder="Search Blogs..."
+            className="search-bar"
           />
         </div>
-        <div className="links-button">
-        <Link to="/addyourblog" className="nav-link">Add Blog</Link>
-        <Link to="/myblog" className="nav-link">My Blog</Link>
-        </div>
+        {user && (
+          <div className="links-button">
+            <Link to="/addyourblog" className="nav-link">
+              Add Blog
+            </Link>
+            <Link to="/myblog" className="nav-link">
+              My Blog
+            </Link>
+          </div>
+        )}
 
         {user ? (
           <>
-            
-            <div 
-              className="profile-container" 
+            <div
+              className="profile-container"
               onClick={() => {
                 navigate("/profile");
                 setMenuOpen(false);
@@ -120,16 +131,16 @@ const Navbar = () => {
           </>
         ) : (
           <>
-            <Link 
-              to="/signup" 
+            <Link
+              to="/signup"
               className="nav-btn auth-btn signup-btn"
               onClick={() => setMenuOpen(false)}
               aria-label="Sign Up"
             >
               Sign Up for Free!
             </Link>
-            <Link 
-              to="/login" 
+            <Link
+              to="/login"
               className="nav-btn auth-btn login-btn"
               onClick={() => setMenuOpen(false)}
               aria-label="Login"
@@ -144,4 +155,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-

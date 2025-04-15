@@ -32,9 +32,9 @@ const Signup = () => {
 
       if (response.data.success) {
         setMessage({ text: "Signup successful! Redirecting...", type: "success" });
-        setTimeout(() => {
+        
           navigate("/login");
-        }, 2000);
+
       }
     } catch (err) {
       setMessage({ text: err.response?.data?.message || "Signup failed!", type: "error" });

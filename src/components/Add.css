@@ -1,0 +1,146 @@
+/* Import Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+.add-blog-form {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #F9FAFB; /* Soft off-white background */
+  font-family: 'Inter', sans-serif;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* Softer shadow */
+}
+
+.add-blog-form h2 {
+  font-size: 28px;
+  font-weight: 600;
+  color: #1F2937; /* Dark gray */
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.add-blog-form input,
+.add-blog-form textarea,
+.add-blog-form select {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 20px;
+  border: 1px solid #E5E7EB; /* Light gray border */
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: 'Inter', sans-serif;
+  color: #1F2937; /* Dark gray text */
+  background-color: #FFFFFF; /* White background for inputs */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.add-blog-form input::placeholder,
+.add-blog-form textarea::placeholder,
+.add-blog-form select:invalid {
+  color: #6B7280; /* Lighter gray for placeholders and default "Select Category" option */
+  font-style: italic;
+}
+
+.add-blog-form input:focus,
+.add-blog-form textarea:focus,
+.add-blog-form select:focus {
+  outline: none;
+  border-color: #1E3A8A; /* Deep blue on focus */
+  box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1); /* Subtle focus ring */
+}
+
+.add-blog-form textarea {
+  min-height: 150px;
+  resize: vertical; /* Allow vertical resizing only */
+}
+
+/* Specific styling for the select element */
+.add-blog-form select {
+  appearance: none; /* Remove default browser styling */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url('data:image/svg+xml;utf8,<svg fill="%231F2937" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>'); /* Custom dropdown arrow */
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  background-size: 16px;
+  cursor: pointer;
+}
+
+/* Style for the options (limited control due to browser restrictions) */
+.add-blog-form select option {
+  font-family: 'Inter', sans-serif;
+  color: #1F2937;
+  background-color: #FFFFFF;
+}
+
+/* Ensure the "Select Category" option appears as a placeholder */
+.add-blog-form select:invalid {
+  color: #6B7280; /* Match placeholder color */
+  font-style: italic;
+}
+
+.add-blog-button {
+  background-color: #1E3A8A; /* Deep blue for button */
+  color: #FFFFFF; /* White text */
+  border: none;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: 600; /* Semi-bold for button */
+  border-radius: 8px;
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.add-blog-button:hover {
+  background-color: #60A5FA; /* Lighter blue on hover */
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+}
+
+.home-blog-button {
+  margin-top: 10px;
+  background-color: #6c757d;
+  color: #FFFFFF; 
+  border: none;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: 600; 
+  border-radius: 8px;
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.home-blog-button:hover {
+  background-color: #5a6268;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .add-blog-form {
+    padding: 15px;
+  }
+
+  .add-blog-form h2 {
+    font-size: 24px;
+  }
+
+  .add-blog-form input,
+  .add-blog-form textarea,
+  .add-blog-form select {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+
+  .add-blog-form button {
+    padding: 10px 15px;
+    font-size: 14px;
+  }
+
+  .add-blog-form select {
+    background-size: 14px; /* Smaller arrow on mobile */
+  }
+}

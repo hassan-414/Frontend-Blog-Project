@@ -1,0 +1,204 @@
+/* Banner.css */
+
+.banner {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background-color: #3730a3; /* Deep indigo color */
+    color: white;
+    padding: 4rem 1rem;
+  }
+  
+  .banner-content {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .banner-text {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  
+  .banner-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+  }
+  
+  .banner-description {
+    font-size: 1.125rem;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+    line-height: 1.6;
+  }
+  
+  .banner-button {
+    background-color: white;
+    color: #3730a3;
+    font-weight: 500;
+    font-size: 16px;
+    padding: 0.75rem 2rem;
+    border-radius: 9999px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .button-hovered {
+    transform: scale(1.05);
+  }
+  
+  .banner-note {
+    font-size: 0.875rem;
+    margin-top: 1.5rem;
+    color: rgba(255, 255, 255, 0.8);
+  }
+  
+  .banner-preview {
+    position: relative;
+    margin: 3rem auto 0;
+    max-width: 800px;
+  }
+  
+  .browser-mockup {
+    background-color: black;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+  
+  .browser-header {
+    background-color: #1a1a1a;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+  }
+  
+  .browser-dot {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+  }
+  
+  .red { background-color: #ff5f56; }
+  .yellow { background-color: #ffbd2e; }
+  .green { background-color: #27c93f; }
+  
+  .blog-preview {
+    aspect-ratio: 16/6;
+    background-color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .preview-content {
+    text-align: center;
+    padding: 1rem;
+  }
+  
+  .preview-title {
+    font-size: 38px;
+    font-family: serif;
+    margin-bottom: 0.5rem;
+  }
+  
+  .preview-subtitle {
+    font-size: 22px;
+    color: #d1d5db;
+  }
+  
+  .preview-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  
+  .preview-box {
+    background-color: rgba(79, 70, 229, 0.3);
+    border-radius: 0.25rem;
+    padding: 0.75rem;
+    height: 6rem;
+  }
+  
+  .decorative-element {
+    position: absolute;
+    z-index: 1;
+  }
+  
+  .square {
+    width: 3rem;
+    height: 3rem;
+    background-color: #4f46e5;
+    border-radius: 0.5rem;
+    transform: rotate(12deg);
+    opacity: 0.7;
+    bottom: -1.5rem;
+    left: -1.5rem;
+  }
+  
+  .circle {
+    width: 4rem;
+    height: 4rem;
+    background-color: #6366f1;
+    border-radius: 50%;
+    opacity: 0.5;
+    top: -1.5rem;
+    right: -1.5rem;
+  }
+  
+  .bg-circle {
+    position: absolute;
+    border-radius: 50%;
+  }
+  
+  .top-right {
+    width: 16rem;
+    height: 16rem;
+    background-color: #4338ca;
+    top: 0;
+    right: 0;
+    transform: translate(50%, -50%);
+    opacity: 0.5;
+  }
+  
+  .bottom-left {
+    width: 24rem;
+    height: 24rem;
+    background-color: #312e81;
+    bottom: 0;
+    left: 0;
+    transform: translate(-50%, 50%);
+    opacity: 0.3;
+  }
+  
+  /* Media queries for responsiveness */
+  @media (min-width: 768px) {
+    .banner {
+      padding: 5rem 2rem;
+    }
+    
+    .banner-title {
+      font-size: 3.5rem;
+    }
+    
+    .banner-description {
+      font-size: 1.25rem;
+    }
+  }
+  
+  @media (max-width: 640px) {
+    .banner-title {
+      font-size: 2rem;
+    }
+    
+    .preview-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .bg-circle {
+      display: none;
+    }
+  }

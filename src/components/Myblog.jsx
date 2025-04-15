@@ -4,11 +4,41 @@ import { Link } from "react-router-dom";
 import { Button, Modal, Form, Input, message } from "antd";
 import "./Myblog.css";
 
+// Separate ReadMoreLess component
+const ReadMoreLess = ({ content, maxLength = 100 }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  if (!content) return null;
+
+  const toggleExpand = () => {
+    setIsExpanded(!isExpanded);
+  };
+
+  const displayContent = isExpanded 
+    ? content 
+    : content.length > maxLength 
+      ? `${content.substring(0, maxLength)}...` 
+      : content;
+
+  return (
+    <div className="read-more-content">
+      <p>{displayContent}</p>
+      {content.length > maxLength && (
+        <button 
+          className="read-more-button" 
+          onClick={toggleExpand}
+        >
+          {isExpanded ? "Show Less" : "Read More"}
+        </button>
+      )}
+    </div>
+  );
+};
+
 const MyBlog = () => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [messageText, setMessageText] = useState("");
-  const [expandedPosts, setExpandedPosts] = useState({});
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [currentBlog, setCurrentBlog] = useState(null);
   const [form] = Form.useForm();
@@ -44,7 +74,6 @@ const MyBlog = () => {
     fetchUserBlogs();
   }, []);
 
-  // ✅ Delete Blog Function
   const handleDelete = async (id) => {
     try {
       const token = localStorage.getItem("token");
@@ -71,7 +100,6 @@ const MyBlog = () => {
     }
   };
 
-  // ✅ Show Edit Modal
   const showEditModal = (blog) => {
     setCurrentBlog(blog);
     form.setFieldsValue({
@@ -83,7 +111,6 @@ const MyBlog = () => {
     setEditModalVisible(true);
   };
 
-  // ✅ Handle Edit Submit (DB Update + UI Update)
   const handleEdit = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -92,7 +119,7 @@ const MyBlog = () => {
         return;
       }
 
-      const values = await form.validateFields(); // Validate form fields
+      const values = await form.validateFields();
       const res = await axios.put(
         `https://backend-blog-project-production-67cb.up.railway.app/api/blogs/${currentBlog._id}`,
         {
@@ -107,7 +134,7 @@ const MyBlog = () => {
       setBlogs(
         blogs.map((blog) =>
           blog._id === currentBlog._id
-            ? { ...blog, title: values.title, description: values.description, category: values.category, image: values.image }
+            ? { ...blog, ...values }
             : blog
         )
       );
@@ -118,18 +145,6 @@ const MyBlog = () => {
       console.error("Error updating blog:", error);
       message.error(error.response?.data?.message || "Failed to update blog.");
     }
-  };
-
-  const toggleReadMore = (postId) => {
-    setExpandedPosts((prev) => ({
-      ...prev,
-      [postId]: !prev[postId],
-    }));
-  };
-
-  const getDisplayContent = (content, postId) => {
-    const isExpanded = expandedPosts[postId];
-    return isExpanded ? content : content.substring(0, 100) + "...";
   };
 
   return (
@@ -155,20 +170,21 @@ const MyBlog = () => {
               </div>
 
               <p className="category">Category: {blog.category}</p>
-              <p className="blog-content">
-                {getDisplayContent(blog.description, blog._id)}
-              </p>
-              <button className="read-more-button" onClick={() => toggleReadMore(blog._id)}>
-                {expandedPosts[blog._id] ? "Show Less" : "Read More"}
-              </button>
-
+              
+              {/* Updated Read More/Less functionality */}
+              <ReadMoreLess content={blog.description} maxLength={100} />
+              
               <div className="blog-divider"></div>
               <div className="blog-actions">
                 <Button type="primary" onClick={() => showEditModal(blog)}>
                   Edit
                 </Button>
-
-                <Button  className="delete-btn" type="secondry" danger onClick={() => handleDelete(blog._id)}>
+                <Button 
+                  className="delete-btn" 
+                  type="default" 
+                  danger 
+                  onClick={() => handleDelete(blog._id)}
+                >
                   Delete
                 </Button>
               </div>
@@ -177,7 +193,6 @@ const MyBlog = () => {
         </div>
       )}
 
-      {/* 📝 Edit Blog Modal */}
       <Modal
         title="Edit Blog"
         open={editModalVisible}
@@ -187,20 +202,35 @@ const MyBlog = () => {
         cancelText="Cancel"
       >
         <Form form={form} layout="vertical">
-          <Form.Item name="title" label="Blog Title" rules={[{ required: true, message: "Please enter title" }]}>
+          <Form.Item 
+            name="title" 
+            label="Blog Title" 
+            rules={[{ required: true, message: "Please enter title" }]}
+          >
             <Input />
           </Form.Item>
 
-          <Form.Item name="description" label="Description" rules={[{ required: true, message: "Please enter description" }]}>
-            <Input.TextArea rows={3} />
+          <Form.Item 
+            name="description" 
+            label="Description" 
+            rules={[{ required: true, message: "Please enter description" }]}
+          >
+            <Input.TextArea rows={4} />
           </Form.Item>
 
-          <Form.Item name="category" label="Category" rules={[{ required: true, message: "Please enter category" }]}>
+          <Form.Item 
+            name="category" 
+            label="Category" 
+            rules={[{ required: true, message: "Please enter category" }]}
+          >
             <Input />
           </Form.Item>
 
-          <Form.Item name="image" label="Image URL" rules={[{ required: true, message: "Please enter image URL" }]}>
-            <Input />
+          <Form.Item 
+            name="image" 
+            label="Image URL"
+          >
+            <Input placeholder="Optional image URL" />
           </Form.Item>
         </Form>
       </Modal>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import CommentSystem from './CommentSystem';
-import './BlogList.css';
+import './Bloglist.css';
 
 const Bloglist = () => {
   const [blogs, setBlogs] = useState([]);

@@ -5,6 +5,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import "./Signup.css";
 import logo from "../assets/logo1.png";
+import ButtonLoader from "./ButtonLoader";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -15,6 +16,7 @@ const Signup = () => {
   });
 
   const [message, setMessage] = useState({ text: "", type: "" });
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -24,6 +26,7 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage({ text: "", type: "" });
+    setLoading(true);
 
     try {
       const response = await axios.post("https://backend-blog-project-production-67cb.up.railway.app/api/signup", formData, {
@@ -32,12 +35,13 @@ const Signup = () => {
 
       if (response.data.success) {
         setMessage({ text: "Signup successful! Redirecting...", type: "success" });
-        
+        setTimeout(() => {
           navigate("/login");
-
+        }, 1000);
       }
     } catch (err) {
       setMessage({ text: err.response?.data?.message || "Signup failed!", type: "error" });
+      setLoading(false);
     }
   };
 
@@ -88,8 +92,8 @@ const Signup = () => {
             required
           />
 
-          <button type="submit" className="signup-button">
-            Sign Up
+          <button type="submit" className="signup-button" disabled={loading}>
+            <ButtonLoader text="Sign Up" loading={loading} />
           </button>
 
           {message.text && (

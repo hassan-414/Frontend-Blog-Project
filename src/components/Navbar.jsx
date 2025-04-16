@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import ButtonLoader from "./ButtonLoader";
 import "./Navbar.css";
 import logo from "../assets/logo1.png";
 
@@ -8,23 +9,36 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isMyBlogLoading, setIsMyBlogLoading] = useState(false);
+  const [isAddBlogLoading, setIsAddBlogLoading] = useState(false);
+  const [isProfileLoading, setIsProfileLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const menuRef = useRef(null);
   const hamburgerRef = useRef(null);
+  const defaultProfile = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) return;
+    if (!token) {
+      setIsAuthenticated(false);
+      return;
+    }
 
+    setIsAuthenticated(true);
     axios
-      .get(
-        "https://backend-blog-project-production-67cb.up.railway.app/api/user",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          withCredentials: true,
-        }
-      )
+      .get("https://backend-blog-project-production-67cb.up.railway.app/api/user", {
+        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
+      })
       .then((res) => setUser(res.data))
-      .catch((err) => console.error("Error fetching user:", err));
+      .catch((err) => {
+        console.error("Error fetching user:", err);
+        if (err.response && err.response.status === 401) {
+          // Token invalid or expired
+          localStorage.removeItem("token");
+          setIsAuthenticated(false);
+        }
+      });
   }, []);
 
   // Close menu if clicked outside
@@ -48,13 +62,10 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post(
-        "https://backend-blog-project-production-67cb.up.railway.app/api/logout",
-        {},
-        { withCredentials: true }
-      );
+      await axios.post("https://backend-blog-project-production-67cb.up.railway.app/api/user", {}, { withCredentials: true });
       localStorage.removeItem("token");
       setUser(null);
+      setIsAuthenticated(false);
       setMenuOpen(false);
       navigate("/");
     } catch (error) {
@@ -66,6 +77,45 @@ const Navbar = () => {
     setMenuOpen(!menuOpen);
   };
 
+  const handleMyBlogClick = (e) => {
+    e.preventDefault();
+    if (!isAuthenticated) {
+      alert("Please login to view your blogs");
+      navigate("/login");
+      return;
+    }
+    setIsMyBlogLoading(true);
+    setTimeout(() => {
+      navigate("/myblog");
+      setMenuOpen(false);
+      setIsMyBlogLoading(false);
+    }, 800);
+  };
+
+  const handleAddBlogClick = (e) => {
+    e.preventDefault();
+    if (!isAuthenticated) {
+      alert("Please login to add a blog");
+      navigate("/login");
+      return;
+    }
+    setIsAddBlogLoading(true);
+    setTimeout(() => {
+      navigate("/addyourblog");
+      setMenuOpen(false);
+      setIsAddBlogLoading(false);
+    }, 800);
+  };
+
+  const handleProfileClick = () => {
+    setIsProfileLoading(true);
+    setTimeout(() => {
+      navigate("/profile");
+      setMenuOpen(false);
+      setIsProfileLoading(false);
+    }, 800);
+  };
+
   return (
     <nav className="navbar">
       <div className="navbar-left">
@@ -75,16 +125,16 @@ const Navbar = () => {
       </div>
 
       <div className="navbar-center-desktop">
-        <input
-          type="text"
-          placeholder="Search Blogs..."
-          className="search-bar"
+        <input 
+          type="text" 
+          placeholder="Search Blogs..." 
+          className="search-bar" 
         />
       </div>
 
-      <div
-        className={`hamburger ${menuOpen ? "open" : ""}`}
-        onClick={toggleMenu}
+      <div 
+        className={`hamburger ${menuOpen ? "open" : ""}`} 
+        onClick={toggleMenu} 
         ref={hamburgerRef}
         aria-label="Menu"
       >
@@ -95,52 +145,78 @@ const Navbar = () => {
 
       <div className={`navbar-right ${menuOpen ? "open" : ""}`} ref={menuRef}>
         <div className="navbar-center-mobile">
-          <input
-            type="text"
-            placeholder="Search Blogs..."
-            className="search-bar"
+          <input 
+            type="text" 
+            placeholder="Search Blogs..." 
+            className="search-bar" 
           />
         </div>
-        {user && (
+        
+        {isAuthenticated && (
           <div className="links-button">
-            <Link to="/addyourblog" className="nav-link">
-              Add Blog
-            </Link>
-            <Link to="/myblog" className="nav-link">
-              My Blog
-            </Link>
+            <a 
+              href="/addyourblog" 
+              className="nav-link" 
+              onClick={handleAddBlogClick} 
+              disabled={isAddBlogLoading}
+            >
+              {isAddBlogLoading ? (
+                <div className="nav-spinner-container">
+                  <div className="spinner nav-spinner"></div>
+                </div>
+              ) : (
+                "Add Blog"
+              )}
+            </a>
+            <a 
+              href="/myblog" 
+              className="nav-link" 
+              onClick={handleMyBlogClick} 
+              disabled={isMyBlogLoading}
+            >
+              {isMyBlogLoading ? (
+                <div className="nav-spinner-container">
+                  <div className="spinner nav-spinner"></div>
+                </div>
+              ) : (
+                "My Blog"
+              )}
+            </a>
           </div>
         )}
 
         {user ? (
           <>
-            <div
-              className="profile-container"
-              onClick={() => {
-                navigate("/profile");
-                setMenuOpen(false);
-              }}
+            <div 
+              className="profile-container" 
+              onClick={handleProfileClick}
               aria-label="Profile"
             >
-              <img
-                src={user.profileImage || defaultProfile}
-                alt="Profile"
-                className="profile-img"
-              />
+              {isProfileLoading ? (
+                <div className="profile-loader">
+                  <div className="spinner profile-spinner"></div>
+                </div>
+              ) : (
+                <img
+                  src={user.profileImage || defaultProfile}
+                  alt="Profile"
+                  className="profile-img"
+                />
+              )}
             </div>
           </>
         ) : (
           <>
-            <Link
-              to="/signup"
+            <Link 
+              to="/signup" 
               className="nav-btn auth-btn signup-btn"
               onClick={() => setMenuOpen(false)}
               aria-label="Sign Up"
             >
               Sign Up for Free!
             </Link>
-            <Link
-              to="/login"
+            <Link 
+              to="/login" 
               className="nav-btn auth-btn login-btn"
               onClick={() => setMenuOpen(false)}
               aria-label="Login"
@@ -155,3 +231,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+

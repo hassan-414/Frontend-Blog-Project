@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import Loader from './Loader';
+import ButtonLoader from './ButtonLoader';
 import './CommentSystem.css';
 
 const CommentSystem = ({ blogId }) => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [deleting, setDeleting] = useState(null);
   const [error, setError] = useState(null);
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editText, setEditText] = useState('');
@@ -31,10 +36,11 @@ const CommentSystem = ({ blogId }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!newComment.trim()) return;
+    setSubmitting(true);
 
     try {
       const response = await axios.post(
-        'https://backend-blog-project-production-67cb.up.railway.app/api/comments',
+        'https://backend-blog-project-production-67cb.up.railway.app/api/comments/blog/${blogId}',
         { content: newComment, blogId },
         {
           headers: {
@@ -44,14 +50,17 @@ const CommentSystem = ({ blogId }) => {
       );
       setComments([...comments, response.data.comment]);
       setNewComment('');
+      setSubmitting(false);
     } catch (err) {
       console.error('Error adding comment:', err);
       setError('Failed to add comment');
+      setSubmitting(false);
     }
   };
 
   const handleEdit = async (commentId) => {
     if (!editText.trim()) return;
+    setEditing(true);
 
     try {
       const response = await axios.put(
@@ -68,13 +77,16 @@ const CommentSystem = ({ blogId }) => {
       ));
       setEditingCommentId(null);
       setEditText('');
+      setEditing(false);
     } catch (err) {
       console.error('Error updating comment:', err);
       setError('Failed to update comment');
+      setEditing(false);
     }
   };
 
   const handleDelete = async (commentId) => {
+    setDeleting(commentId);
     try {
       await axios.delete(`https://backend-blog-project-production-67cb.up.railway.app/api/comments/${commentId}`, {
         headers: {
@@ -82,9 +94,11 @@ const CommentSystem = ({ blogId }) => {
         }
       });
       setComments(comments.filter(comment => comment._id !== commentId));
+      setDeleting(null);
     } catch (err) {
       console.error('Error deleting comment:', err);
       setError('Failed to delete comment');
+      setDeleting(null);
     }
   };
 
@@ -105,7 +119,12 @@ const CommentSystem = ({ blogId }) => {
     });
   };
 
-  if (loading) return <div className="comment-loading">Loading comments...</div>;
+  if (loading) return (
+    <div className="comment-loading">
+      <Loader size="medium" />
+    </div>
+  );
+  
   if (error) return <div className="comment-error">{error}</div>;
 
   return (
@@ -119,16 +138,22 @@ const CommentSystem = ({ blogId }) => {
             onChange={(e) => setNewComment(e.target.value)}
             placeholder="Write a comment..."
             className="comment-input"
+            disabled={submitting}
           />
           <div className="comment-buttons">
-            <button type="submit" className="comment-submit-btn">
-              Post Comment
+            <button 
+              type="submit" 
+              className="comment-submit-btn"
+              disabled={submitting || !newComment.trim()}
+            >
+              <ButtonLoader text="Post Comment" loading={submitting} />
             </button>
             {newComment.trim() && (
               <button 
                 type="button" 
                 className="comment-cancel-btn"
                 onClick={() => setNewComment('')}
+                disabled={submitting}
               >
                 Cancel
               </button>
@@ -153,13 +178,15 @@ const CommentSystem = ({ blogId }) => {
                   value={editText}
                   onChange={(e) => setEditText(e.target.value)}
                   className="comment-input"
+                  disabled={editing}
                 />
                 <div className="comment-buttons">
                   <button 
                     onClick={() => handleEdit(comment._id)}
                     className="comment-submit-btn"
+                    disabled={editing || !editText.trim()}
                   >
-                    Save
+                    <ButtonLoader text="Save" loading={editing} />
                   </button>
                   <button 
                     onClick={() => {
@@ -167,6 +194,7 @@ const CommentSystem = ({ blogId }) => {
                       setEditText('');
                     }}
                     className="comment-cancel-btn"
+                    disabled={editing}
                   >
                     Cancel
                   </button>
@@ -183,14 +211,16 @@ const CommentSystem = ({ blogId }) => {
                         setEditText(comment.content);
                       }}
                       className="comment-edit-btn"
+                      disabled={deleting === comment._id}
                     >
                       Edit
                     </button>
                     <button 
                       onClick={() => handleDelete(comment._id)}
                       className="comment-delete-btn"
+                      disabled={deleting === comment._id}
                     >
-                      Delete
+                      <ButtonLoader text="Delete" loading={deleting === comment._id} />
                     </button>
                   </div>
                 )}

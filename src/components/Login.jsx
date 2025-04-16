@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import "./Login.css";
 import logo from "../assets/logo1.png"; 
+import ButtonLoader from "./ButtonLoader";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +14,7 @@ const Login = () => {
   });
 
   const [message, setMessage] = useState({ text: "", type: "" });
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -23,6 +25,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage({ text: "", type: "" });
+    setLoading(true);
 
     try {
       const response = await axios.post(
@@ -36,11 +39,13 @@ const Login = () => {
         
         setMessage({ text: "Login successful! Redirecting...", type: "success" });
 
+        setTimeout(() => {
           navigate("/"); 
-       
+        }, 1000);
       }
     } catch (err) {
       setMessage({ text: err.response?.data?.message || "Invalid credentials!", type: "error" });
+      setLoading(false);
     }
   };
 
@@ -56,8 +61,8 @@ const Login = () => {
 
           <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} className="login-input" required/>
 
-          <button type="submit" className="login-button">
-            Login
+          <button type="submit" className="login-button" disabled={loading}>
+            <ButtonLoader text="Login" loading={loading} />
           </button>
 
           {message.text && (

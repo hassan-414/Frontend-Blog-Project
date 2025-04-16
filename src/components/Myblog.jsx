@@ -1,44 +1,16 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
-import { Button, Modal, Form, Input, message } from "antd";
-import "./Myblog.css";
-
-// Separate ReadMoreLess component
-const ReadMoreLess = ({ content, maxLength = 100 }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  if (!content) return null;
-
-  const toggleExpand = () => {
-    setIsExpanded(!isExpanded);
-  };
-
-  const displayContent = isExpanded 
-    ? content 
-    : content.length > maxLength 
-      ? `${content.substring(0, maxLength)}...` 
-      : content;
-
-  return (
-    <div className="read-more-content">
-      <p>{displayContent}</p>
-      {content.length > maxLength && (
-        <button 
-          className="read-more-button" 
-          onClick={toggleExpand}
-        >
-          {isExpanded ? "Show Less" : "Read More"}
-        </button>
-      )}
-    </div>
-  );
-};
+import { Link, useNavigate } from "react-router-dom";
+import { Button, Modal, Form, Input, Select, message } from "antd";
+import Loader from "./Loader";
+import ButtonLoader from "./ButtonLoader";
+import "./MyBlog.css";
 
 const MyBlog = () => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [messageText, setMessageText] = useState("");
+  const [expandedPosts, setExpandedPosts] = useState({});
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [currentBlog, setCurrentBlog] = useState(null);
   const [form] = Form.useForm();
@@ -74,6 +46,7 @@ const MyBlog = () => {
     fetchUserBlogs();
   }, []);
 
+  // ✅ Delete Blog Function
   const handleDelete = async (id) => {
     try {
       const token = localStorage.getItem("token");
@@ -100,6 +73,7 @@ const MyBlog = () => {
     }
   };
 
+  // ✅ Show Edit Modal
   const showEditModal = (blog) => {
     setCurrentBlog(blog);
     form.setFieldsValue({
@@ -111,6 +85,7 @@ const MyBlog = () => {
     setEditModalVisible(true);
   };
 
+  // ✅ Handle Edit Submit (DB Update + UI Update)
   const handleEdit = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -119,7 +94,15 @@ const MyBlog = () => {
         return;
       }
 
+      // Validate all form fields
       const values = await form.validateFields();
+      
+      // Check if any field is empty
+      if (!values.title.trim() || !values.description.trim() || !values.category || !values.image.trim()) {
+        message.error("All fields are required");
+        return;
+      }
+
       const res = await axios.put(
         `https://backend-blog-project-production-67cb.up.railway.app/api/blogs/${currentBlog._id}`,
         {
@@ -134,7 +117,7 @@ const MyBlog = () => {
       setBlogs(
         blogs.map((blog) =>
           blog._id === currentBlog._id
-            ? { ...blog, ...values }
+            ? { ...blog, title: values.title, description: values.description, category: values.category, image: values.image }
             : blog
         )
       );
@@ -143,8 +126,28 @@ const MyBlog = () => {
       setEditModalVisible(false);
     } catch (error) {
       console.error("Error updating blog:", error);
-      message.error(error.response?.data?.message || "Failed to update blog.");
+      if (error.response?.data?.message) {
+        message.error(error.response.data.message);
+      } else if (error.message) {
+        message.error(error.message);
+      } else {
+        message.error("Failed to update blog.");
+      }
     }
+  };
+
+  const toggleReadMore = (postId) => {
+    setExpandedPosts((prev) => ({
+      ...prev,
+      [postId]: !prev[postId],
+    }));
+  };
+
+  const getTruncatedContent = (content) => {
+    if (!content) return '';
+    const maxLength = 150; // Character limit for truncated content
+    if (content.length <= maxLength) return content;
+    return content.substring(0, maxLength) + '...';
   };
 
   return (
@@ -152,7 +155,9 @@ const MyBlog = () => {
       <h2>My Blogs</h2>
 
       {loading ? (
-        <p>Loading your blogs...</p>
+        <div className="my-blog-loader-container">
+          <div className="spinner my-blog-spinner"></div>
+        </div>
       ) : messageText ? (
         <p>
           {messageText} <Link to="/addyourblog">Create one now!</Link>
@@ -165,26 +170,39 @@ const MyBlog = () => {
               <span className="blog-date">
                 {new Date(blog.createdAt).toLocaleDateString()}
               </span>
-              <div className="blog-image">
-                <img src={blog.image || "default.jpg"} alt={blog.title} />
+              <div className="blog-image-container">
+                <img 
+                  src={blog.image || "default.jpg"} 
+                  alt={blog.title} 
+                  className="blog-image"
+                />
               </div>
 
               <p className="category">Category: {blog.category}</p>
-              
-              {/* Updated Read More/Less functionality */}
-              <ReadMoreLess content={blog.description} maxLength={100} />
-              
+              <div className="blog-content-wrapper">
+                <p className={`blog-content ${expandedPosts[blog._id] ? 'expanded' : ''}`}>
+                  {expandedPosts[blog._id] ? blog.description : getTruncatedContent(blog.description)}
+                </p>
+                {blog.description && blog.description.length > 150 && (
+                  <button 
+                    className="read-more-btn"
+                    onClick={() => toggleReadMore(blog._id)}
+                  >
+                    <ButtonLoader 
+                      text={expandedPosts[blog._id] ? 'Show Less' : 'Read More'} 
+                      loading={false} 
+                    />
+                  </button>
+                )}
+              </div>
+
               <div className="blog-divider"></div>
               <div className="blog-actions">
                 <Button type="primary" onClick={() => showEditModal(blog)}>
                   Edit
                 </Button>
-                <Button 
-                  className="delete-btn" 
-                  type="default" 
-                  danger 
-                  onClick={() => handleDelete(blog._id)}
-                >
+
+                <Button className="delete-btn" type="secondry" danger onClick={() => handleDelete(blog._id)}>
                   Delete
                 </Button>
               </div>
@@ -193,6 +211,7 @@ const MyBlog = () => {
         </div>
       )}
 
+      {/* 📝 Edit Blog Modal */}
       <Modal
         title="Edit Blog"
         open={editModalVisible}
@@ -202,35 +221,28 @@ const MyBlog = () => {
         cancelText="Cancel"
       >
         <Form form={form} layout="vertical">
-          <Form.Item 
-            name="title" 
-            label="Blog Title" 
-            rules={[{ required: true, message: "Please enter title" }]}
-          >
+          <Form.Item name="title" label="Blog Title" rules={[{ required: true, message: "Please enter title" }]}>
             <Input />
           </Form.Item>
 
-          <Form.Item 
-            name="description" 
-            label="Description" 
-            rules={[{ required: true, message: "Please enter description" }]}
-          >
-            <Input.TextArea rows={4} />
+          <Form.Item name="description" label="Description" rules={[{ required: true, message: "Please enter description" }]}>
+            <Input.TextArea rows={3} />
           </Form.Item>
 
-          <Form.Item 
-            name="category" 
-            label="Category" 
-            rules={[{ required: true, message: "Please enter category" }]}
-          >
+          <Form.Item name="category" label="Category" rules={[{ required: true, message: "Please select a category" }]}>
+            <Select placeholder="Select a category">
+              <Select.Option value="">Select Category</Select.Option>
+              <Select.Option value="Business">Business</Select.Option>
+              <Select.Option value="Study">Study</Select.Option>
+              <Select.Option value="Technology">Technology</Select.Option>
+              <Select.Option value="Food">Food</Select.Option>
+              <Select.Option value="Travel">Travel</Select.Option>
+              <Select.Option value="Others">Others</Select.Option>
+            </Select>
+          </Form.Item>
+
+          <Form.Item name="image" label="Image URL" rules={[{ required: true, message: "Please enter image URL" }]}>
             <Input />
-          </Form.Item>
-
-          <Form.Item 
-            name="image" 
-            label="Image URL"
-          >
-            <Input placeholder="Optional image URL" />
           </Form.Item>
         </Form>
       </Modal>

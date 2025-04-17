@@ -23,7 +23,7 @@ function Banner() {
     <div className="banner">
       <div className="banner-content">
         <div className="banner-text">
-          <h1 className="banner-title">Create a blog worth sharing</h1>
+          <h1 className="banner-title">Create a blog worth sharing.</h1>
           <p className="banner-description">
           Whether it's about study hacks, travel adventures, or delicious food experiences – start your blog today and share your story with the world!
           </p>

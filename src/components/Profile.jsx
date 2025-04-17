@@ -43,6 +43,8 @@ const Profile = () => {
     try {
       setIsLoading(true);
       setError(null);
+      const token = localStorage.getItem("token");
+
       const response = await axios.get("https://backend-blog-project-production-67cb.up.railway.app/api/user", {
         headers: {
           Authorization: `Bearer ${token}`,

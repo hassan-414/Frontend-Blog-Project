@@ -86,8 +86,19 @@ const Profile = () => {
   const handleLogout = async () => {
     try {
       setIsLoggingOut(true);
-      await axios.post("https://backend-blog-project-production-67cb.up.railway.app/api/logout", {}, { withCredentials: true });
+      const token = localStorage.getItem("token");
+      await axios.post(
+        "https://backend-blog-project-production-67cb.up.railway.app/api/logout",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          
+        }
+      );
       localStorage.removeItem("token");
+
       setTimeout(() => {
         navigate("/");
       }, 500);
@@ -141,9 +152,12 @@ const Profile = () => {
     try {
       setIsUpdating(true);
       setError(null);
-      const response = await axios.put("https://backend-blog-project-production-67cb.up.railway.app/api/user/update", formData, {
-        withCredentials: true,
-      });
+      const token = localStorage.getItem("token");
+      const response = await axios.put("https://backend-blog-project-production-67cb.up.railway.app/api/user/update", formData,  {
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+  });
       setUser(response.data.user);
       setIsFirstTime(false); // No longer first time after successful submit
       setIsUpdating(false);

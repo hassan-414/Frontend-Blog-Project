@@ -40,7 +40,8 @@ const CommentSystem = ({ blogId }) => {
 
     try {
       const response = await axios.post(
-        'https://backend-blog-project-production-67cb.up.railway.app/api/comments/blog/${blogId}',
+        `https://backend-blog-project-production-67cb.up.railway.app/api/comments/blog/${blogId}`
+,
         { content: newComment, blogId },
         {
           headers: {

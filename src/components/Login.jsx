@@ -26,28 +26,32 @@ const Login = () => {
     e.preventDefault();
     setMessage({ text: "", type: "" });
     setLoading(true);
-
+  
     try {
       const response = await axios.post(
         "https://backend-blog-project-production-67cb.up.railway.app/api/login",
-        formData,
-        { withCredentials: true }
+        formData
       );
-
+  
       if (response.data.success) {
+        localStorage.setItem("token", response.data.token);
+        // Call auth context login (assuming it sets user in context)
         await login(response.data.token, response.data.user);
-        
         setMessage({ text: "Login successful! Redirecting...", type: "success" });
-
         setTimeout(() => {
-          navigate("/"); 
+          navigate("/");
         }, 1000);
       }
     } catch (err) {
-      setMessage({ text: err.response?.data?.message || "Invalid credentials!", type: "error" });
+      setMessage({
+        text: err.response?.data?.message || "Invalid credentials!",
+        type: "error"
+      });
+    } finally {
       setLoading(false);
     }
   };
+  
 
   return (
     <div className="login-container">

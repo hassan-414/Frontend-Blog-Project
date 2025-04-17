@@ -27,7 +27,6 @@ const MyBlog = () => {
 
         const res = await axios.get("https://backend-blog-project-production-67cb.up.railway.app/api/blogs/my-blogs", {
           headers: { Authorization: `Bearer ${token}` },
-          withCredentials: true,
         });
 
         if (res.data.blogs.length === 0) {
@@ -59,8 +58,7 @@ const MyBlog = () => {
       if (!confirmDelete) return;
 
       const res = await axios.delete(`https://backend-blog-project-production-67cb.up.railway.app/api/blogs/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-        withCredentials: true,
+        headers: { Authorization: `Bearer ${token}` },        
       });
 
       if (res.status === 200) {

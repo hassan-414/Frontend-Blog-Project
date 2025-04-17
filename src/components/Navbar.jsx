@@ -18,28 +18,30 @@ const Navbar = () => {
   const defaultProfile = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setIsAuthenticated(false);
-      return;
-    }
-
-    setIsAuthenticated(true);
-    axios
-      .get("https://backend-blog-project-production-67cb.up.railway.app/api/user", {
-        headers: { Authorization: `Bearer ${token}` },
-        withCredentials: true,
-      })
-      .then((res) => setUser(res.data))
-      .catch((err) => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          setIsAuthenticated(false);
+          return;
+        }
+        setIsAuthenticated(true);
+        const res = await axios.get("https://backend-blog-project-production-67cb.up.railway.app/api/user", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setUser(res.data);
+      } catch (err) {
         console.error("Error fetching user:", err);
         if (err.response && err.response.status === 401) {
-          // Token invalid or expired
           localStorage.removeItem("token");
           setIsAuthenticated(false);
         }
-      });
+      }
+    };
+  
+    fetchUserData();
   }, []);
+  
 
   // Close menu if clicked outside
   useEffect(() => {
@@ -60,18 +62,7 @@ const Navbar = () => {
     };
   }, [menuOpen]);
 
-  const handleLogout = async () => {
-    try {
-      await axios.post("https://backend-blog-project-production-67cb.up.railway.app/api/user", {}, { withCredentials: true });
-      localStorage.removeItem("token");
-      setUser(null);
-      setIsAuthenticated(false);
-      setMenuOpen(false);
-      navigate("/");
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
-  };
+ 
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);

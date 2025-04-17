@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import Cookies from "js-cookie";
 import "./Signup.css";
 import logo from "../assets/logo1.png";
 import ButtonLoader from "./ButtonLoader";
@@ -30,7 +29,7 @@ const Signup = () => {
 
     try {
       const response = await axios.post("https://backend-blog-project-production-67cb.up.railway.app/api/signup", formData, {
-        withCredentials: true, // Ensure cookies are sent
+        withCredentials: true, 
       });
 
       if (response.data.success) {

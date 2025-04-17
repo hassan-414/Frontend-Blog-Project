@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Loader from "./Loader";
 import ButtonLoader from "./ButtonLoader";
 import PageTransition from "./PageTransition";
+import axios from 'axios';
 import './Add.css';
 
 const AddBlog = ({ onBlogAdded }) => {
@@ -19,7 +20,6 @@ const AddBlog = ({ onBlogAdded }) => {
     e.preventDefault();
     setError("");
     setIsSubmitting(true);
-
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -28,35 +28,31 @@ const AddBlog = ({ onBlogAdded }) => {
         return;
       }
 
-      const res = await fetch("https://backend-blog-project-production-67cb.up.railway.app/api/blogs", {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({ title, description, image, category }),
-      });
-
-      const data = await res.json();
-      
-      if (res.ok) {
+      const res = await axios.post(
+        "https://backend-blog-project-production-67cb.up.railway.app/api/blogs", 
+        { title, description, image, category },
+        {
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          }
+        }
+      );
         alert("Blog posted successfully!");
         setTitle("");
         setDescription("");
         setImage("");
         setCategory("");
-        if (onBlogAdded) {
-          onBlogAdded();
-        }
+        if (onBlogAdded) onBlogAdded();
         navigate('/myblog');
-      } else {
-        setError(data.message || "Failed to post blog");
-        alert(data.message || "Failed to post blog");
-        setIsSubmitting(false);
-      }
+     
     } catch (err) {
-      setError("An error occurred while posting the blog");
-      alert("An error occurred while posting the blog");
+      const message =
+        err.response?.data?.message ||
+        err.message ||
+        "An error occurred while posting the blog";
+      setError(message);
+      alert(message);
       setIsSubmitting(false);
     }
   };

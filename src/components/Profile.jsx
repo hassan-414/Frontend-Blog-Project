@@ -31,10 +31,14 @@ const Profile = () => {
   const countryList = [
     { name: "Pakistan" },
     { name: "India" },
+    { name: "Iran" },
+    { name: "Iraq" },
     { name: "United States" },
     { name: "United Kingdom" },
     { name: "Canada" },
-    { name: "Australia" }
+    { name: "Australia" },
+    { name: "Afghanistan" }
+   
   ];
 
   const navigate = useNavigate();
@@ -44,18 +48,15 @@ const Profile = () => {
       setIsLoading(true);
       setError(null);
       const token = localStorage.getItem("token");
-
       const response = await axios.get("https://backend-blog-project-production-67cb.up.railway.app/api/user", {
         headers: {
           Authorization: `Bearer ${token}`,
       }
     });
       setUser(response.data);
-      
-      // Check if this is first time (profile not complete)
       if (!response.data.firstName || !response.data.lastName) {
         setIsFirstTime(true);
-        setIsModalOpen(true); // Auto-open modal for first-timers
+        setIsModalOpen(true);
       }
 
       if (response.data) {
@@ -112,7 +113,6 @@ const Profile = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: "" }));
     }
@@ -120,8 +120,6 @@ const Profile = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    
-    // All fields are required for first-time profile creation
     if (isFirstTime) {
       if (!formData.firstName.trim()) newErrors.firstName = "First name is required";
       if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";
@@ -133,7 +131,6 @@ const Profile = () => {
       if (!formData.qualification) newErrors.qualification = "Qualification is required";
       if (!formData.address) newErrors.address = "Address is required";
     } else {
-      // Only basic fields required for updates
       if (!formData.firstName.trim()) newErrors.firstName = "First name is required";
       if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";
     }
@@ -144,11 +141,9 @@ const Profile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     if (!validateForm()) {
       return;
     }
-    
     try {
       setIsUpdating(true);
       setError(null);
@@ -159,7 +154,7 @@ const Profile = () => {
     },
   });
       setUser(response.data.user);
-      setIsFirstTime(false); // No longer first time after successful submit
+      setIsFirstTime(false);
       setIsUpdating(false);
       setIsModalOpen(false);
     } catch (error) {

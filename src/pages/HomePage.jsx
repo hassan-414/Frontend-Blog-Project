@@ -3,16 +3,16 @@ import Navbar from '../components/Navbar'
 import Banner from '../components/Banner'
 import BlogList from '../components/Bloglist'
 import Footer from '../components/Footer'
-
+import PageTransition from '../components/PageTransition'
 
 const HomePage = () => {
   return (
-    <>
-    <Navbar/>
-    <Banner/>
-    <BlogList/>
-    <Footer/>
-    </>
+    <PageTransition>
+      <Navbar/>
+      <Banner/>
+      <BlogList/>
+      <Footer/>
+    </PageTransition>
   )
 }
 

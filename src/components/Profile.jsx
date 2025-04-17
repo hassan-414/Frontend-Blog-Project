@@ -44,8 +44,10 @@ const Profile = () => {
       setIsLoading(true);
       setError(null);
       const response = await axios.get("https://backend-blog-project-production-67cb.up.railway.app/api/user", {
-        withCredentials: true,
-      });
+        headers: {
+          Authorization: `Bearer ${token}`,
+      }
+    });
       setUser(response.data);
       
       // Check if this is first time (profile not complete)

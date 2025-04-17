@@ -48,7 +48,7 @@ const AddBlog = ({ onBlogAdded }) => {
         if (onBlogAdded) {
           onBlogAdded();
         }
-        navigate('/');
+        navigate('/myblog');
       } else {
         setError(data.message || "Failed to post blog");
         alert(data.message || "Failed to post blog");

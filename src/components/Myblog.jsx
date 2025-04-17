@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button, Modal, Form, Input, Select, message } from "antd";
 import Loader from "./Loader";
 import ButtonLoader from "./ButtonLoader";
-import "./MyBlog.css";
+import "./Myblog.css";
 
 const MyBlog = () => {
   const [blogs, setBlogs] = useState([]);

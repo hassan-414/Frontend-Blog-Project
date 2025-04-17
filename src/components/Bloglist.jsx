@@ -5,7 +5,7 @@ import CommentSystem from './CommentSystem';
 import Loader from './Loader';
 import ButtonLoader from './ButtonLoader';
 import PageTransition from './PageTransition';
-import './BlogList.css';
+import './Bloglist.css';
 
 const Bloglist = () => {
   const [blogs, setBlogs] = useState([]);

@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Loader from "./Loader";
 import ButtonLoader from "./ButtonLoader";
-// import PageTransition from "./PageTransition";
+import PageTransition from "./PageTransition";
 import "./Profile.css";
 
 const Profile = () => {

@@ -19,7 +19,7 @@ const App = () => {
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/addyourblog" element={<AddYourPage />} />
-        <Route path="/myblog" element={<MyBlogPage />} />
+        <Route path="/myblog" element={<MyBlogPage data={[]} />} />
       </Routes>
     </AuthProvider>
   );

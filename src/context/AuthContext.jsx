@@ -76,15 +76,6 @@ export const AuthProvider = ({ children }) => {
         setUser(userData);
     };
 
-    // Debug log
-    useEffect(() => {
-        console.log('Auth State Updated:', { 
-            isAuthenticated, 
-            user, 
-            token: localStorage.getItem('token') 
-        });
-    }, [isAuthenticated, user]);
-
     return (
         <AuthContext.Provider 
             value={{ 

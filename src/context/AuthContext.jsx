@@ -86,7 +86,7 @@ export const AuthProvider = ({ children }) => {
                 logout: handleLogout 
             }}
         >
-            {/* {children} */}
+            {children}
         </AuthContext.Provider>
     );
 };

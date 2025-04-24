@@ -2,7 +2,6 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 1rem;
-
 }
 
 .blog-list-title {
@@ -37,20 +36,20 @@
 
 .blog-image-container {
   position: relative;
-  /* max-height: 350px;  <-- hata diya */
-  aspect-ratio: 16 / 9;      /* har device par ek jaisa ratio dikhane ke liye */
+  width: 100%;
+  aspect-ratio: 16 / 9;
   overflow: hidden;
   margin-bottom: 15px;
   border-radius: 8px;
 }
 
 .blog-image {
-  position: absolute;       /* container ko poori tarah cover karne ke liye */
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;        /* image container mein crop hoke cover karegi */
+  object-fit: cover;
   transition: transform 0.3s ease;
 }
 
@@ -191,13 +190,13 @@
   }
 
   .blog-list {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    flex-direction: column;
     gap: 0.8rem;
     padding: 0.3rem;
   }
 
   .blog-image-container {
-    max-height: 300px;
+    aspect-ratio: 16 / 9;
   }
 
   .blog-content {
@@ -215,11 +214,12 @@
 
 @media (max-width: 480px) {
   .blog-list {
-    grid-template-columns: 1fr;
+    flex-direction: column;
+    gap: 0.6rem;
   }
 
   .blog-image-container {
-    max-height: 250px;
+    aspect-ratio: 16 / 9;
   }
 
   .blog-content {

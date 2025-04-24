@@ -37,18 +37,20 @@
 
 .blog-image-container {
   position: relative;
-  width: 100%;
-  height: auto;
-  max-height: 350px;
+  /* max-height: 350px;  <-- hata diya */
+  aspect-ratio: 16 / 9;      /* har device par ek jaisa ratio dikhane ke liye */
   overflow: hidden;
   margin-bottom: 15px;
   border-radius: 8px;
 }
 
 .blog-image {
+  position: absolute;       /* container ko poori tarah cover karne ke liye */
+  top: 0;
+  left: 0;
   width: 100%;
-  height: auto;
-  object-fit: contain;
+  height: 100%;
+  object-fit: cover;        /* image container mein crop hoke cover karegi */
   transition: transform 0.3s ease;
 }
 

@@ -36,17 +36,21 @@
 
 /* IMAGE STYLES: Full display without cropping */
 .blog-image-container {
+  position: relative;
   width: 100%;
+  aspect-ratio: 16 / 9;    /* desktop pe hamesha 16:9 ratio */
   overflow: hidden;
   margin-bottom: 15px;
   border-radius: 8px;
 }
 
 .blog-image {
-  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  height: auto;
-  object-fit: contain;
+  height: 100%;
+  object-fit: cover;       /* container fill karte hue crop */
   transition: transform 0.3s ease;
 }
 
@@ -193,11 +197,15 @@
   }
 
   .blog-image-container {
-    width: 100%;
+    aspect-ratio: auto;    /* mobile pe height auto */
+    max-height: 300px;     /* agar chahiye toh limit de sakte hain */
   }
 
   .blog-image {
-    object-fit: contain;
+    position: static;
+    width: 100%;
+    height: auto;
+    object-fit: contain;   /* poori image dikhegi */
   }
 
   .blog-content {
